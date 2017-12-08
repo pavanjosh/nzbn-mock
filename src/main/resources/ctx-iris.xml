@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util" xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:annotation-config />
+    <!--<aop:aspectj-autoproxy />-->
+    <context:component-scan base-package="com.example.activity.nbnzdemo" />
+
+    <bean id="allowAllHostnameVerifier" class="org.apache.http.conn.ssl.AllowAllHostnameVerifier" />
+
+    <bean id="httpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder" factory-method="create">
+        <property name="hostnameVerifier" ref="allowAllHostnameVerifier"></property>
+        <property name="maxConnPerRoute" value="100"/>
+        <property name="maxConnTotal" value="100"/>
+        <!-- TODO: add default handlers -->
+        <!-- SSL Context -->
+        <!-- MaxTotalConnections -->
+        <!-- ConnectionManager -->
+    </bean>
+
+
+
+    <!--<bean id="transformerService" class="au.com.optus.express.moa.digital.common.transformers.MOAConversionServiceFactoryBean">-->
+        <!--<property name="converters">-->
+            <!--<list>-->
+                <!--&lt;!&ndash; bean class="au.com.optus.express.moa.digital.common.transformers.PayMeansToCreditCardDetails"/ &ndash;&gt;-->
+                <!--<bean class="au.com.optus.express.moa.digital.common.transformers.ServiceEntityAndContactOutputToSubscriber" />-->
+                <!--<bean class="au.com.optus.express.moa.digital.common.transformers.SubscriberToServiceProfile" />-->
+                <!--&lt;!&ndash; bean class="au.com.optus.express.moa.digital.common.transformers.ImplPaymentRestOutputToCreditCardPaymentResponse"/ &ndash;&gt;-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <bean id="httpClient" factory-method="build" factory-bean="httpClientBuilder"/>
+
+
+
+    <bean id="defaultHttpClientFactory" class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+        <constructor-arg ref="httpClient" />
+        <property name="connectTimeout" value="5000"/>
+        <property name="readTimeout" value="5000"/>
+    </bean>
+
+
+
+
+    <!-- perf4j configuration -->
+    <!--<bean id="timingAspect" class="org.perf4j.slf4j.aop.TimingAspect"/>-->
+
+    <!--<bean id="authInterceptor" class="au.com.optus.express.moa.digital.common.client.AuthenticationInterceptor" />-->
+
+	<!--  Authentication Client -->
+    <bean id="nZBNClient" class="org.springframework.web.client.RestTemplate">
+        <qualifier value="nZBNClient" />
+        <constructor-arg ref="defaultHttpClientFactory"></constructor-arg>
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="prefixJson" value="false" />
+                    <property name="supportedMediaTypes" value="application/json" />
+                </bean>
+                <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter">
+                    <property name="supportedMediaTypes" value="application/xml"></property>
+                </bean>
+                <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
+
+
+</beans>
