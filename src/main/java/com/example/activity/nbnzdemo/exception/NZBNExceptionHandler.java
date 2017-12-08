@@ -24,40 +24,41 @@ import com.google.gson.Gson;
 @ControllerAdvice
 public class NZBNExceptionHandler {
 
-  @ExceptionHandler(HttpClientErrorException.class)
-  public void handleServiceException(HttpClientErrorException se, HttpServletResponse response) throws IOException {
-    //response.sendError(response.getStatus(),se.getMessage());
-    String body = se.getResponseBodyAsString();
-    Gson gson = new Gson();
-    ServiceException serviceException = gson.fromJson(body, ServiceException.class);
-    throw serviceException;
-  }
-  @ExceptionHandler(ResourceAccessException.class)
-  public void handleResourceAccessException(HttpClientErrorException se, HttpServletResponse response) throws IOException {
+  @ExceptionHandler(ServiceException.class)
+  public void handleServiceException(ServiceException se, HttpServletResponse response) throws IOException {
     response.sendError(response.getStatus(),se.getMessage());
-    String body = se.getResponseBodyAsString();
-    Gson gson = new Gson();
-    ServiceException serviceException = gson.fromJson(body, ServiceException.class);
-    throw serviceException;
+//    String body = se.getResponseBodyAsString();
+//    Gson gson = new Gson();
+//    ServiceException serviceException = gson.fromJson(body, ServiceException.class);
+//    throw serviceException;
   }
- // @Bean
-//  public ErrorAttributes errorAttributes() {
-//
-//    return new DefaultErrorAttributes() {
-//      @Override
-//      public Map<String, Object> getErrorAttributes(RequestAttributes requestAttributes, boolean includeStackTrace) {
-//        Map<String, Object> defaultErrorAttributes = super.getErrorAttributes(requestAttributes, includeStackTrace);
-//        Throwable error = getError(requestAttributes);
-//        if(error instanceof ServiceException){
-//          ServiceException se = (ServiceException) error;
-//          Map<String, Object> map = new HashMap<>();
-//          map.put("errorCode", se.getErrorCode());
-//          map.put("errorMessage", se.getErrorMessage());
-//          return map;
-//        }
-//        System.out.println("Throwing SpringBoot Exception " + defaultErrorAttributes);
-//        return defaultErrorAttributes;
-//      }
-//    };
+//  @ExceptionHandler(ResourceAccessException.class)
+//  public void handleResourceAccessException(HttpClientErrorException se, HttpServletResponse response) throws IOException {
+//    response.sendError(response.getStatus(),se.getMessage());
+//    String body = se.getResponseBodyAsString();
+//    Gson gson = new Gson();
+//    ServiceException serviceException = gson.fromJson(body, ServiceException.class);
+//    throw serviceException;
 //  }
+  @Bean
+  public ErrorAttributes errorAttributes() {
+
+    return new DefaultErrorAttributes() {
+      @Override
+      public Map<String, Object> getErrorAttributes(RequestAttributes requestAttributes, boolean includeStackTrace) {
+        Map<String, Object> defaultErrorAttributes = super.getErrorAttributes(requestAttributes, includeStackTrace);
+        Throwable error = getError(requestAttributes);
+        if(error instanceof ServiceException){
+          ServiceException se = (ServiceException) error;
+          Map<String, Object> map = new HashMap<>();
+          map.put("errorCode", se.getErrorCode());
+          map.put("errorMessage", se.getErrorMessage());
+          map.put("errorDescription",se.getErrorDescription());
+          return map;
+        }
+        System.out.println("Throwing SpringBoot Exception " + defaultErrorAttributes);
+        return defaultErrorAttributes;
+      }
+    };
+  }
 }

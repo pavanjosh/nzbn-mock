@@ -66,7 +66,7 @@ public class NZBNWrapper implements NZBNWrapperIF {
     HttpEntity<?> entity = new HttpEntity<>(headers);
     System.out.println("Entity headers " +entity.getHeaders());
     RestTemplate restTemplate = new RestTemplate();
-    //restTemplate.setErrorHandler(new NZBNDefaultErrorHandler());
+    restTemplate.setErrorHandler(new NZBNDefaultErrorHandler());
     System.out.println("url headers " +restTemplate.getUriTemplateHandler().expand(entityUrl, uriMap));
     ResponseEntity<String> response = restTemplate.exchange(entityUrl, HttpMethod.GET,entity, String.class, uriMap);
     return response.getBody();

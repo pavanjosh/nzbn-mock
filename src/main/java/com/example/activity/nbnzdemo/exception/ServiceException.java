@@ -12,6 +12,15 @@ public class ServiceException extends RuntimeException {
   private String errorMessage;
   private int httpStatus;
   private String status;
+  private String errorDescription;
+
+  public String getErrorDescription() {
+    return errorDescription;
+  }
+
+  public void setErrorDescription(String errorDescription) {
+    this.errorDescription = errorDescription;
+  }
 
   public ServiceException() {
 
