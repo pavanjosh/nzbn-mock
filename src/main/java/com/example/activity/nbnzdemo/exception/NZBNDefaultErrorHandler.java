@@ -17,17 +17,28 @@ import com.google.gson.Gson;
  */
 public class NZBNDefaultErrorHandler extends DefaultResponseErrorHandler{
 
+  private final int UNAUTHORISED_CODE = 401;
   @Override public boolean hasError(ClientHttpResponse response) throws IOException {
     return super.hasError(response);
   }
 
   @Override public void handleError(ClientHttpResponse response) throws IOException {
     HttpStatus statusCode = response.getStatusCode();
-    String errorBody = new String(getResponseBody(response), "UTF-8");
-    Gson gson = new Gson();
-    ServiceException se = gson.fromJson(errorBody,ServiceException.class);
-    se.setErrorCode(se.getStatus());
-    throw se;
+    String statusText = response.getStatusText();
+    if(statusCode.value() == UNAUTHORISED_CODE){
+      ServiceException se = new ServiceException();
+      se.setErrorCode(String.valueOf(statusCode));
+      se.setErrorDescription(statusText);
+      throw se;
+    }
+    else{
+      String errorBody = new String(getResponseBody(response), "UTF-8");
+      Gson gson = new Gson();
+      ServiceException se = gson.fromJson(errorBody,ServiceException.class);
+      se.setErrorCode(se.getStatus());
+      throw se;
+    }
+
   }
 
   public byte[] getResponseBody(ClientHttpResponse response) {

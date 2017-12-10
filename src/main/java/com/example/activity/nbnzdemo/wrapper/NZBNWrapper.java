@@ -72,7 +72,7 @@ public class NZBNWrapper implements NZBNWrapperIF {
     return response.getBody();
   }
 
-  @Cacheable("NZBNAccessToken")
+  //@Cacheable("NZBNAccessToken")
   @Override
   public NZBNAccessToken getServiceToken() {
 
@@ -80,9 +80,10 @@ public class NZBNWrapper implements NZBNWrapperIF {
         .queryParam("grant_type", "client_credentials");
 
     HttpHeaders headers = new HttpHeaders();
-    //headers.add("Content-Type", "application/json");
+    headers.add("Content-Type", "application/x-www-form-urlencoded");
+    System.out.println("Basic " +basic);
     headers.add("Authorization","Basic "+basic);
-    //headers.add("Accept","application/json");
+
     HttpEntity<?> entity = new HttpEntity<>(headers);
     System.out.println("Entity headers " +entity.getHeaders());
     System.out.println("Final url "+ builder.toUriString());
