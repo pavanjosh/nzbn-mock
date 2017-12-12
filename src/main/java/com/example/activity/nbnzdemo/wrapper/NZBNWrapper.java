@@ -46,17 +46,12 @@ public class NZBNWrapper implements NZBNWrapperIF {
   @Qualifier("nZBNClient")
   private RestTemplate template;
 
-//  @Autowired
-//  private NZBNAccessToken nzbnAccessToken;
+
 
   @Override
   public String getEntityDetails(String nZBNNumber,String bearerAccessToken) {
 
-    // Check if there is a token already, if not get the token
-    // But if token already present then check that last time fetched and expures in
-    // if expired get another token if not use the same token
 
-    //String bearerAccessToken = getBearerAccessToken();
     Map<String, String> uriMap = new HashMap<String, String>();
     uriMap.put("nzbn", nZBNNumber);
     HttpHeaders headers = new HttpHeaders();
