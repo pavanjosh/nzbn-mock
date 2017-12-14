@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -38,19 +39,18 @@ public class NZBNWrapper implements NZBNWrapperIF {
   @Value("${nzbn.basic}")
   private String basic;
 
-  private String entityUrl = "https://api.business.govt.nz/services/v3/nzbn/entities/{nzbn}";
-  private String serviceTokenUrl = "https://api.business.govt.nz/services/token";
+  @Value("${nzbn.entity.url}")
+  private String entityUrl;
 
+  @Value("${nzbn.service.token.url}")
+  private String serviceTokenUrl;
 
   @Autowired
   @Qualifier("nZBNClient")
   private RestTemplate template;
 
-
-
   @Override
   public String getEntityDetails(String nZBNNumber,String bearerAccessToken) {
-
 
     Map<String, String> uriMap = new HashMap<String, String>();
     uriMap.put("nzbn", nZBNNumber);
@@ -67,10 +67,20 @@ public class NZBNWrapper implements NZBNWrapperIF {
     return response.getBody();
   }
 
-  //@Cacheable("NZBNAccessToken")
+  @Cacheable("NZBNAccessToken")
   @Override
   public NZBNAccessToken getServiceToken() {
 
+    return getNZBNToken();
+  }
+
+  @CachePut("NZBNAccessToken")
+  @Override public NZBNAccessToken getNewServiceToken() {
+
+    return getNZBNToken();
+  }
+
+  private NZBNAccessToken getNZBNToken(){
     UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(serviceTokenUrl)
         .queryParam("grant_type", "client_credentials");
 
@@ -87,5 +97,4 @@ public class NZBNWrapper implements NZBNWrapperIF {
     body.setLastFetchTime(DateTime.now());
     return body;
   }
-
 }

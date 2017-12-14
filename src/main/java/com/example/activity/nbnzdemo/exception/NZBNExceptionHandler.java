@@ -26,7 +26,7 @@ public class NZBNExceptionHandler {
 
   @ExceptionHandler(ServiceException.class)
   public void handleServiceException(ServiceException se, HttpServletResponse response) throws IOException {
-    response.sendError(response.getStatus(),se.getMessage());
+    response.sendError(se.getHttpStatus());
 //    String body = se.getResponseBodyAsString();
 //    Gson gson = new Gson();
 //    ServiceException serviceException = gson.fromJson(body, ServiceException.class);

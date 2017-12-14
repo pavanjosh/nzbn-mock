@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Scope;
 import com.example.activity.nbnzdemo.model.NZBNAccessToken;
 
 
-//@EnableCaching
+@EnableCaching
 @SpringBootApplication
 @ImportResource(locations = { "classpath*:ctx-iris.xml" })
 public class ActivityDemoApplication {

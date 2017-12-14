@@ -29,6 +29,7 @@ public class NZBNDefaultErrorHandler extends DefaultResponseErrorHandler{
       ServiceException se = new ServiceException();
       se.setErrorCode(String.valueOf(statusCode));
       se.setErrorDescription(statusText);
+      se.setHttpStatus(UNAUTHORISED_CODE);
       throw se;
     }
     else{
@@ -36,6 +37,7 @@ public class NZBNDefaultErrorHandler extends DefaultResponseErrorHandler{
       Gson gson = new Gson();
       ServiceException se = gson.fromJson(errorBody,ServiceException.class);
       se.setErrorCode(se.getStatus());
+      se.setHttpStatus(statusCode.value());
       throw se;
     }
 

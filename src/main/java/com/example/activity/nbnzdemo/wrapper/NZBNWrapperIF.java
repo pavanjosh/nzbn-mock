@@ -9,4 +9,6 @@ public interface NZBNWrapperIF {
 
   public String getEntityDetails(String NZBNNumber,String bearerAccessToken);
   public NZBNAccessToken getServiceToken();
+  public NZBNAccessToken getNewServiceToken();
+
 }
